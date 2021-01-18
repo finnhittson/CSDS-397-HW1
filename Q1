@@ -1,0 +1,41 @@
+/*------------------------------
+CODE FOR ASSIGNMENT 1 QUESTION 1
+------------------------------*/
+
+#include <iostream>
+#include <string>
+
+using namespace std;
+
+int main() {
+
+    std :: string A, B;                                 // hold input strings
+    int n;                                              // holds input integer
+    std :: cout << "input one string: ";                // asks for first string
+    getline(std :: cin, A);                             // assigns first string to A
+    std :: cout << "input another string: ";            // asks for second string
+    getline(std :: cin, B);                             // assigns second string to B
+    std :: cout << "input number: ";                    // asks for integer
+    std :: cin >> n;                                    // assigns integer to n
+    if (n < 0)                                          // checks if integer is positive
+        return 0;
+    if (n == 0 && A.at(0) == B.at(0)) {                 // case when n is zero. for loop will not run
+        std :: cout << "TRUE";
+        return 0;
+    }
+    if (n > A.length() || n > B.length()) {             // case when n is bigger than the length of A or B
+        if (A.length() > B.length())                    // assigns n to be the smaller of the two strings
+            n = B.length();
+        else
+            n = A.length();
+    }
+    for (int i = 0; i < n; i++) {                       // iterates through strings up to integer n position
+        if (i < n && A.at(i) != B.at(i)) {              // checks if characters are different and if loop count is below n
+            std :: cout << "FALSE";                     // prints false and exits method
+            return 0;
+        }
+        if (i + 1 == n && A[i] == B[i])                 // checks if characters are different and if loop count equals n
+            std :: cout << "TRUE";                      // prints TRUE that strings are equal up to point n
+    }
+    return 0;
+}
