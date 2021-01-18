@@ -1,0 +1,65 @@
+/*------------------------------
+CODE FOR ASSIGNMENT 1 QUESTION 3
+------------------------------*/
+
+#include <iostream>
+#include <string>
+#include <vector>
+
+int main() {
+    bool run = true;                                    // boolean used to keep requesting expressions
+    while (run) {                                       // while loop operating on run boolean until invalid expression entered
+        std :: cout << "type expression: ";             // get input expression
+        std :: string exp;                              // holds input expression
+        getline(std :: cin, exp);                       // assigns input to holder variable
+        std :: vector <std :: string> expression;       // string vector to hold parsed form of input expression
+        int append = 0;                                 // holds position of numbers in expression. updated constantly
+        for (int i = 0; i < exp.length(); i++) {        // iterates through string input expression
+            /*
+            * checks for spaces, letters or two operators in a row
+            * sets run to false and exits main method
+            */
+            if (exp.at(i) == ' ' || isalpha(exp.at(i)) != 0 || (isdigit(exp.at(i)) == 0 && isdigit(exp.at(i + 1)) == 0)) {
+                run = false;
+                return 0;
+            }
+            if (isdigit(exp.at(i)) == 0) {                                      // checks if loops is on operator
+                expression.push_back(exp.substr(append, i - append));           // adds number before operator to end of expression vector
+                char c = exp.at(i);                                             // type cast operator as char to string
+                std :: string s;
+                s = c;
+                expression.push_back(s);                                        // adds operator to end of expression vector
+                append = i + 1;                                                 // changes value of append to start on number after operator
+            }
+            if (i == exp.length() - 1)                                          // checks if loop is at end of input expression
+                expression.push_back(exp.substr(append, i + 1 - append));       // appends final number in input expression
+        }
+        std :: vector <std :: string> ops { "/", "*", "-", "+" };               // vector holding operators in order to be evaluated
+        int opsCount = 0;                                                       // counter to iterate through ops vector
+        for (int j = 0; j < expression.size(); j++) {                           // iterates through expression vector
+            if (expression.at(j) == ops.at(opsCount)) {                         // checks if loop is at operator in expression vector
+                /*
+                * checks if ops vector is on "/" operator and verifies that opsCount is 0
+                * evaluates with numbers before and after "/". results replace current position
+                * following else if statements follow same logic but for operators "*", "-" and "+"
+                */
+                if (ops.at(opsCount) == "/" && opsCount == 0)
+                    expression.at(j) = std :: to_string(stoi(expression.at(j - 1)) / stoi(expression.at(j + 1)));
+                else if (ops.at(opsCount) == "*" && opsCount == 1)
+                    expression.at(j) = std :: to_string(stoi(expression.at(j - 1)) * stoi(expression.at(j + 1)));
+                else if (ops.at(opsCount) == "-" && opsCount == 2)
+                    expression.at(j) = std :: to_string(stoi(expression.at(j - 1)) - stoi(expression.at(j + 1)));
+                else
+                    expression.at(j) = std :: to_string(stoi(expression.at(j - 1)) + stoi(expression.at(j + 1)));
+                expression.erase(expression.begin() + j + 1);       // erases vector positions before and after the evaluated operator
+                expression.erase(expression.begin() + j - 1);
+                j = 0;                                              // resets loop counter because of shorter expression vector length
+            }
+            if (j == expression.size() - 1) {                       // checks if loop is at end of expression vector
+                j = 0;                                              // resets loop counter for next cycle with new operator
+                opsCount++;                                         // increases opsCounter to evaluate next operator for entire expression vector
+            }
+        }
+        std :: cout << expression.at(0) << std :: endl;             // prints results of expression
+    }
+}
