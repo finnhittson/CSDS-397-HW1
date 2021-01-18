@@ -1,0 +1,46 @@
+/*--------------------
+ CODE FOR CHALLENGE 1
+---------------------*/
+
+#include <iostream>
+#include <vector>
+#include <string>
+
+int main() {
+    std :: string line;                             // holds input string
+    std :: cout << "enter string: ";                // asks user to input string
+    getline(std :: cin, line);                      // assigns input to line variable
+    std :: vector <int> numbers;                    // creates vector to hold numbers from line
+    for (int i = 0; i < line.length(); i++) {       // iterates through line
+        if (isdigit(line.at(i)) > 0){               // checks if loop position is on a number
+            std :: string holder;                   // holder used for proper type conversion
+            holder = line.at(i);                    // assigns number at loop position to holder variable
+            numbers.push_back(std :: stoi(holder);  // adds number to numbers vector
+        }
+    }
+    if (numbers.size() > 0) {                       // only runs if there were numbers in entered string
+        bool endOfList= false;                      // end condition for shorting loop
+        while (!endOfList)
+        for (int i = 0; i < numbers.size(); i++) {
+            if (i + 1 < numbers.size() && numbers.at(i) > numbers.at(i + 1)) {  // if former is larger than latter then switched and loop restarted
+                int temp = numbers.at(i + 1);                                   // temp variable to hold one value while the other is switched
+                numbers.at(i + 1) = numbers.at(i);
+                numbers.at(i) = temp;
+                i = 0;
+            }
+            else                                                                // triggered when no instances of the former being larger than the latter
+                endOfList = true;                                               // the vector is therefore sorted
+        }
+        int numbersCounter = 0;                                                 // counter for numbers vector
+        for (int i = 0; i < line.length(); i++) {                               // iterates through input string again
+            if (isdigit(line.at(i)) > 0){                                       // checks if current position contains a digit
+                line = line.substr(0, i) + std :: to_string(numbers.at(numbersCounter)) + line.substr(i + 1);   // reassigns number in line to number from vector
+                numbersCounter++;
+            }
+        }
+        std :: cout << line << std :: endl;                                     // prints new line
+    }
+    else                                                                        // if no numbers were in line then original line is printed
+        std :: cout << line << std :: endl;
+    return 0;
+}
