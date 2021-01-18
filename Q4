@@ -1,0 +1,64 @@
+/*------------------------------
+CODE FOR ASSIGNMENT 1 QUESTION 4
+------------------------------*/
+
+#include <iostream>
+#include <string>
+#include <vector>
+#include <fstream>
+
+int main() {
+    std :: string inputFile = "question_4.txt";                     // open file
+    std :: ifstream input = std :: ifstream(inputFile);             // create object for input file stream
+    if (!input.good() && !input.is_open()) {                        // warns and exits if file is no good
+        std :: cout << "Check file address or name" << std :: endl;
+        return 0;
+    }
+    std :: string line;                                             // holds line from file with unevaluated expression(s)
+    std :: string outLine;                                          // holds line with evaluated expression(s)
+    while (!input.eof()) {                                          // runs until end of file is reached
+        getline(input, line);                                       // assigns line from file to line variable
+        for (int i = 0; i < line.length(); i++) {                   // iterates through line variable
+            if (line.at(i) == '/' || line.at(i) == '*' || line.at(i) == '-' || line.at(i) == '+') {     // checks for operator
+                if (isdigit(line.at(i - 1)) > 0 && isdigit(line.at(i + 1)) > 0) {                       // checks for numbers before and after operator
+                    int leftIndex = i - 1;                                                              // holds position for start of number left of operator
+                    if (leftIndex - 1 >= 0)                                                             // checks that leftIndex will not go out of bounds
+                        while (leftIndex > 0 && isdigit(line.at(leftIndex)))                            // checks leftIndex is positive and is a digit at line location
+                            leftIndex--;
+                    int rightIndex = i + 1;                                                             // holds position for start of number right of operator
+                    if  (rightIndex + 1 < line.length())                                                // checks that rightIndex will not go out of bounds
+                        while (rightIndex < line.length() && isdigit(line.at(rightIndex)))              // checks rightIndex is less than length of line and is a digit
+                            rightIndex++;
+                    if (isdigit(line.at(rightIndex)) == 0)                                              // checks if rightIndex position is still a number
+                        rightIndex--;                                                                   // decreases value by one to it will hold a position with a digit
+                    if (isdigit(line.at(leftIndex)) == 0)                                               // checks if leftIndex position is still a number
+                        leftIndex++;                                                                    // increases value by one to it will hold a position with a digit
+                    int result = 0;                                                                     // holds result of mathematical expression
+                    /*
+                     * the following four if/else statements find the correct operator and evaluate the expression using the found matching operator
+                     */
+                    if (line.at(i) == '/')
+                        result = std :: stoi(line.substr(leftIndex, i - leftIndex)) / std :: stoi(line.substr(i + 1, rightIndex - i));
+                    else if (line.at(i) == '*')
+                        result = std :: stoi(line.substr(leftIndex, i - leftIndex)) * std :: stoi(line.substr(i + 1, rightIndex - i));
+                    else if (line.at(i) == '-')
+                        result = std :: stoi(line.substr(leftIndex, i - leftIndex)) - std :: stoi(line.substr(i + 1, rightIndex - i));
+                    else if (line.at(i) == '+')
+                        result = std :: stoi(line.substr(leftIndex, i - leftIndex)) + std :: stoi(line.substr(i + 1, rightIndex - i));
+                    outLine = outLine + line.substr(0, leftIndex) + std :: to_string(result);           // adds unaltered string before expression to outLine with result
+                    line = line.substr(rightIndex + 1, line.length() - rightIndex);                     // assigns new line to be string after expression just operated on
+                    i = 0;                                                                              // starts loop over since line has a different length
+                }
+            }
+            else if (isdigit(line.at(i)) == 0) {                // run if loop position is not on an operator or a number
+                outLine = outLine + line.substr(0, i + 1);      // characters at loop position to outLine
+                line = line.substr(i + 1);                      // reassigns line to be string after current loop position
+                i = 0;                                          // starts loop over since line has a different length
+            }
+        }
+        outLine = outLine + line + "\n";                        // appends whatever is left of line and adds a new line (\n) to the outline
+    }
+    std :: cout << outLine << std :: endl;                      // print to see result
+    input.close();                                              // close input file
+    return 0;
+}
